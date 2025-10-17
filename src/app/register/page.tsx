@@ -2,13 +2,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import SignInContainer from '@/components/SignInContainer';
@@ -16,9 +13,16 @@ import Card from '@/components/Card';
 import { z } from "zod";
 
 
+const registerSchema = z.object({
+    name: z
+        .string()
+        .nonempty("İsim alanı boş bırakılamaz.")
+        .min(2, "İsim en az 2 karakter olmalıdır."),
 
-const loginSchema = z.object({
-
+    surname: z
+        .string()
+        .nonempty("Soyisim alanı boş bırakılamaz.")
+        .min(2, "Soyisim en az 2 karakter olmalıdır."),
 
     email: z
         .string()
@@ -28,28 +32,36 @@ const loginSchema = z.object({
         .string()
         .nonempty("Şifre alanı boş bırakılamaz.")
         .min(6, "Şifre en az 6 karakter olmalıdır."),
-
+    confirmpassword: z
+        .string()
+        .nonempty("Şifre tekrar alanı boş bırakılamaz."),
 
 })
+    .refine((data) => data.password === data.confirmpassword, {
+        path: ["confirmpassword"],
+        message: "Şifreler birbiriyle eşleşmiyor.",
+    });
 
-export default function Login(props: { disableCustomTheme?: boolean }) {
+
+
+
+export default function Register(props: { disableCustomTheme?: boolean }) {
+
     const [formData, setFormData] = React.useState({
+        name: "",
+        surname: "",
         email: "",
         password: "",
+        confirmpassword: "",
     });
 
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [open, setOpen] = React.useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputName = e.target.name;
-        const inputValue = e.target.value;
-
-        setFormData({
-            email: inputName === "email" ? inputValue : formData.email,
-            password: inputName === "password" ? inputValue : formData.password,
-        });
-    }
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -60,7 +72,7 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
     };
 
     const validateInputs = () => {
-        const result = loginSchema.safeParse(formData);
+        const result = registerSchema.safeParse(formData);
         if (!result.success) {
             const fieldErrors = result.error.flatten().fieldErrors;
             const newErrors: Record<string, string> = {};
@@ -74,13 +86,16 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
         return true;
     };
 
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!validateInputs()) return;
 
-        console.log("Form verileri:", formData);
-        alert("Giriş başarılı!");
+        console.log("✅ Form verileri:", formData);
+        alert("Kayıt başarılı!");
     };
+
+
 
     return (
         <>
@@ -92,7 +107,7 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                         variant="h4"
                         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                     >
-                        Sign in
+                        Sign up
                     </Typography>
                     <Box
                         component="form"
@@ -105,6 +120,42 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                             gap: 2,
                         }}
                     >
+                        <FormControl>
+                            <FormLabel htmlFor="name">Name</FormLabel>
+                            <TextField
+                                id="name"
+                                type="text"
+                                name="name"
+                                placeholder="your name"
+                                value={formData.name}
+                                autoComplete="text"
+                                autoFocus
+                                required
+                                fullWidth
+                                variant="outlined"
+                                onChange={handleChange}
+                                error={!!errors.name}
+                                helperText={errors.name}
+
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="surname">Surname</FormLabel>
+                            <TextField
+                                id="surname"
+                                type="text"
+                                name="surname"
+                                placeholder="your surname"
+                                autoComplete="text"
+                                required
+                                fullWidth
+                                variant="outlined"
+                                value={formData.surname}
+                                onChange={handleChange}
+                                error={!!errors.surname}
+                                helperText={errors.surname}
+                            />
+                        </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="email">Email</FormLabel>
                             <TextField
@@ -139,27 +190,30 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                                 helperText={errors.password}
                             />
                         </FormControl>
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                        />
+                        <FormControl>
+                            <FormLabel htmlFor="confirmpassword">Confirm Password</FormLabel>
+                            <TextField
+                                id="confirmpassword"
+                                name="confirmpassword"
+                                type="password"
+                                placeholder="••••••"
+                                value={formData.confirmpassword}
+                                onChange={handleChange}
+                                error={!!errors.confirmpassword}
+                                helperText={errors.confirmpassword}
+                                fullWidth
+                                variant="outlined"
+                            />
+                        </FormControl>
+
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            onClick={validateInputs}
                         >
-                            Sign in
+                            Sign up
                         </Button>
-                        <Link
-                            component="button"
-                            type="button"
-                            onClick={handleClickOpen}
-                            variant="body2"
-                            sx={{ alignSelf: 'center' }}
-                        >
-                            Forgot your password?
-                        </Link>
+
                     </Box>
                     <Divider>or</Divider>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -177,19 +231,10 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                         >
                             Sign in with Facebook
                         </Button>
-                        <Typography sx={{ textAlign: 'center' }}>
-                            Don&apos;t have an account?{' '}
-                            <Link
-                                href="/material-ui/getting-started/templates/sign-in/"
-                                variant="body2"
-                                sx={{ alignSelf: 'center' }}
-                            >
-                                Sign up
-                            </Link>
-                        </Typography>
+
                     </Box>
                 </Card>
             </SignInContainer>
         </>
-    )
+    );
 }
