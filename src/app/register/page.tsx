@@ -8,41 +8,9 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import SignInContainer from '@/components/SignInContainer';
-import Card from '@/components/Card';
-import { z } from "zod";
-
-
-const registerSchema = z.object({
-    name: z
-        .string()
-        .nonempty("İsim alanı boş bırakılamaz.")
-        .min(2, "İsim en az 2 karakter olmalıdır."),
-
-    surname: z
-        .string()
-        .nonempty("Soyisim alanı boş bırakılamaz.")
-        .min(2, "Soyisim en az 2 karakter olmalıdır."),
-
-    email: z
-        .string()
-        .nonempty("Email alanı boş bırakılamaz.")
-        .email("Geçerli bir email adresi giriniz."),
-    password: z
-        .string()
-        .nonempty("Şifre alanı boş bırakılamaz.")
-        .min(6, "Şifre en az 6 karakter olmalıdır."),
-    confirmpassword: z
-        .string()
-        .nonempty("Şifre tekrar alanı boş bırakılamaz."),
-
-})
-    .refine((data) => data.password === data.confirmpassword, {
-        path: ["confirmpassword"],
-        message: "Şifreler birbiriyle eşleşmiyor.",
-    });
-
-
+import SignInContainer from '@/components/sign-in-container';
+import Card from '@/components/card';
+import { registerSchema } from '@/schemas/register-schema';
 
 
 export default function Register(props: { disableCustomTheme?: boolean }) {
@@ -59,8 +27,16 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     const [open, setOpen] = React.useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const inputName = e.target.name;
+        const inputValue = e.target.value;
+
+        setFormData({
+            name: inputName === "name" ? inputValue : formData.name,
+            surname: inputName === "surname" ? inputValue : formData.surname,
+            email: inputName === "email" ? inputValue : formData.email,
+            password: inputName === "password" ? inputValue : formData.password,
+            confirmpassword: inputName === "confirmpassword" ? inputValue : formData.confirmpassword,
+        });
     };
 
     const handleClickOpen = () => {
@@ -91,7 +67,7 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
         event.preventDefault();
         if (!validateInputs()) return;
 
-        console.log("✅ Form verileri:", formData);
+        console.log("Form verileri:", formData);
         alert("Kayıt başarılı!");
     };
 
@@ -100,8 +76,8 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     return (
         <>
             <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifyContent="space-between">
-                <Card variant="outlined">
+            <SignInContainer direction="column" justifyContent="space-between "  >
+                <Card variant="outlined" >
                     <Typography
                         component="h1"
                         variant="h4"

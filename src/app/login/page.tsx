@@ -11,26 +11,11 @@ import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import SignInContainer from '@/components/SignInContainer';
-import Card from '@/components/Card';
-import { z } from "zod";
+import SignInContainer from '@/components/sign-in-container';
+import Card from '@/components/card';
+import { loginSchema } from "@/schemas/login-schema";
 
 
-
-const loginSchema = z.object({
-
-
-    email: z
-        .string()
-        .nonempty("Email alanı boş bırakılamaz.")
-        .email("Geçerli bir email adresi giriniz."),
-    password: z
-        .string()
-        .nonempty("Şifre alanı boş bırakılamaz.")
-        .min(6, "Şifre en az 6 karakter olmalıdır."),
-
-
-})
 
 export default function Login(props: { disableCustomTheme?: boolean }) {
     const [formData, setFormData] = React.useState({
