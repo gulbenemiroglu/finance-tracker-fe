@@ -71,7 +71,12 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
         <>
             <CssBaseline enableColorScheme />
             <SignInContainer direction="column" justifyContent="space-between">
-                <Card variant="outlined">
+                <Card variant="outlined" sx={{
+                    maxWidth: 400,
+                    width: "100%",
+                    margin: "auto",
+                    overflowY: "auto",
+                }}>
                     <Typography
                         component="h1"
                         variant="h4"
@@ -165,7 +170,7 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                         <Typography sx={{ textAlign: 'center' }}>
                             Don&apos;t have an account?{' '}
                             <Link
-                                href="/material-ui/getting-started/templates/sign-in/"
+                                href="/register"
                                 variant="body2"
                                 sx={{ alignSelf: 'center' }}
                             >

@@ -77,7 +77,12 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
         <>
             <CssBaseline enableColorScheme />
             <SignInContainer direction="column" justifyContent="space-between "  >
-                <Card variant="outlined" >
+                <Card variant="outlined" sx={{
+                    maxWidth: 400,
+                    width: "100%",
+                    margin: "auto",
+                    overflowY: "auto",
+                }}>
                     <Typography
                         component="h1"
                         variant="h4"
