@@ -14,8 +14,15 @@ import Typography from '@mui/material/Typography';
 import SignInContainer from '@/components/sign-in-container';
 import Card from '@/components/card';
 import { loginSchema } from "@/schemas/login-schema";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref
+) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function Login(props: { disableCustomTheme?: boolean }) {
     const [formData, setFormData] = React.useState({
@@ -25,6 +32,11 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
 
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [open, setOpen] = React.useState(false);
+    const [toast, setToast] = React.useState({
+        open: false,
+        message: "",
+        severity: "success" as "success" | "error" | "warning" | "info",
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputName = e.target.name;
@@ -56,15 +68,25 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
             return false;
         }
         setErrors({});
+        setToast({
+            open: true,
+            message: "Lütfen formu doğru doldurunuz.",
+            severity: "error",
+        });
         return true;
     };
+
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!validateInputs()) return;
 
-        console.log("Form verileri:", formData);
-        alert("Giriş başarılı!");
+        setToast({
+            open: true,
+            message: "Giriş başarılı!",
+            severity: "success",
+        });
     };
 
     return (
@@ -180,6 +202,20 @@ export default function Login(props: { disableCustomTheme?: boolean }) {
                     </Box>
                 </Card>
             </SignInContainer>
+            <Snackbar
+                open={toast.open}
+                autoHideDuration={3000}
+                onClose={() => setToast({ ...toast, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert
+                    onClose={() => setToast({ ...toast, open: false })}
+                    severity={toast.severity}
+                >
+                    {toast.message}
+                </Alert>
+            </Snackbar>
+
         </>
     )
 }
